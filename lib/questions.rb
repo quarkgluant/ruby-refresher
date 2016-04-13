@@ -252,7 +252,11 @@ end
 # e.g. january 1st, will next be a friday in 2016
 # return the day as a capitalized string like 'Friday'
 def your_birthday_is_on_a_friday_in_the_year(birthday)
-	 (birthday + (60*60*24*365)).friday?
+	20.times do |i|
+	 	if (birthday + (60*60*24*365) * i).friday?
+	 		return (birthday + (60*60*24*365) * i).year
+	 	end
+	 end
 end
 
 # in a file, total the number of times words of different lengths
