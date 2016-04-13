@@ -30,7 +30,7 @@ end
 # make sure you don't have the same pairing twice, 
 def every_possible_pairing_of_students(array)
 	# array.product(array).uniq{|item| item.}
-	array.permutation(2).to_a.uniq
+	array.permutation(2).to_a.map{|tab| tab.sort}.uniq
 end
 
 # discard the first 3 elements of an array, 
@@ -252,6 +252,7 @@ end
 # e.g. january 1st, will next be a friday in 2016
 # return the day as a capitalized string like 'Friday'
 def your_birthday_is_on_a_friday_in_the_year(birthday)
+	 (birthday + (60*60*24*365)).friday?
 end
 
 # in a file, total the number of times words of different lengths
