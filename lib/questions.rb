@@ -30,13 +30,14 @@ end
 # make sure you don't have the same pairing twice, 
 def every_possible_pairing_of_students(array)
 	# array.product(array).uniq{|item| item.}
-	array.permutation(2).uniq{|a,b| (a, b) != (b,a)}
+	array.permutation(2).to_a.uniq
 end
 
 # discard the first 3 elements of an array, 
 # e.g. [1, 2, 3, 4, 5, 6] becomes [4, 5, 6]
 def all_elements_except_first_3(array)
 	array.shift(3)
+	array
 end
 
 # add an element to the beginning of an array
@@ -54,7 +55,8 @@ end
 # 'banana' becomes 'ban'. If the string is an odd number of letters
 # round up - so 'apple' becomes 'app'
 def get_first_half_of_string(string)
-	string.slice(string.size.even? string.size / 2 : (string.size + 1) / 2 )
+	taille = string.size.even? ? string.size / 2 : (string.size + 1) / 2 
+	string.slice(0, taille)
 end
 
 # turn a positive integer into a negative integer. A negative integer
@@ -96,13 +98,13 @@ end
 # add up all the numbers in an array, so [1, 3, 5, 6]
 # returns 15
 def total_of_array(array)
-	array.reduce(&:+)
+	array.reduce(:+)
 end
 
 # turn an array into itself repeated twice. So [1, 2, 3]
 # becomes [1, 2, 3, 1, 2, 3]
 def double_array(array)
-	array << array
+	(array  * 2 ).flatten
 end
 
 # convert a symbol into a string
@@ -113,7 +115,7 @@ end
 # get the average from an array, rounded to the nearest integer
 # so [10, 15, 25] should return 17
 def average_of_array(array)
-	(array.reduce(&:+) / array.size).round
+	(array.reduce(:+) / array.size.to_f).round
 end
 
 # get all the elements in an array, up until the first element
@@ -121,14 +123,14 @@ end
 # [1, 3, 5, 4, 1, 2, 6, 2, 1, 3, 7]
 # becomes [1, 3, 5, 4, 1, 2]
 def get_elements_until_greater_than_five(array)
-	array.take_while{|n| n < 5}
+	array.take_while{|n| n < 6}
 end
 
 # turn an array (with an even number of elements) into a hash, by
 # pairing up elements. e.g. ['a', 'b', 'c', 'd'] becomes
 # {'a' => 'b', 'c' => 'd'}
 def convert_array_to_a_hash(array)
-	Hash[array]
+	Hash[*array]
 end
 
 # get all the letters used in an array of words and return
@@ -136,7 +138,7 @@ end
 # . e.g. the array ['cat', 'dog', 'fish'] becomes
 # ['a', 'c', 'd', 'f', 'g', 'h', 'i', 'o', 's', 't']
 def get_all_letters_in_array_of_words(array)
-	array.inject([]){|acc, word| acc << word.split(//)}.sort
+	array.inject([]){|acc, word| acc << word.split(//)}.flatten.sort
 end
 
 # swap the keys and values in a hash. e.g.
@@ -150,7 +152,7 @@ end
 # add all the keys and all the values together, e.g.
 # {1 => 1, 2 => 2} becomes 6
 def add_together_keys_and_values(hash)
-	hash.keys.reduce(&:+) + hash.values.reduce(&:+)
+	hash.keys.reduce(:+) + hash.values.reduce(:+)
 end
 
 # take out all the capital letters from a string
@@ -162,7 +164,7 @@ end
 # round up a float up and convert it to an Integer,
 # so 3.214 becomes 4
 def round_up_number(float)
-	float.round
+	float.truncate + 1
 end
 
 # round down a float up and convert it to an Integer,
@@ -174,7 +176,7 @@ end
 # take a date and format it like dd/mm/yyyy, so Halloween 2013
 # becomes 31/10/2013
 def format_date_nicely(date)
-	date.strftime("%m/%d/%Y")
+	date.strftime("%d/%m/%Y")
 end
 
 # get the domain name *without* the .com part, from an email address
@@ -189,15 +191,21 @@ end
 # 'the lion the witch and the wardrobe' becomes
 # 'The Lion the Witch and the Wardrobe'
 def titleize_a_string(string)
-	string[0].capitalize
-	res = string.split.map{|word|	word.capitalize unless ['a', 'the', 'and'].include?(word)}
-	res
+	string[0] = string[0].upcase
+	string.split.inject([]) do |res, word|
+		if ['a', 'the', 'and'].include?(word)
+			res << word
+		else
+			res << word.capitalize
+		end
+	end.join(" ")
+end
 
 # return true if a string contains any special characters
 # where 'special character' means anything apart from the letters
 # a-z (uppercase and lower) or numbers
 def check_a_string_for_special_characters(string)
-	/\W+/.match(string)
+	string.match(/[^a-zA-Z0-9]/).nil? ? false : true
 end
 
 # get the upper limit of a range. e.g. for the range 1..20, you
@@ -220,7 +228,7 @@ end
 # count the number of words in a file
 def word_count_a_file(file_path)
 	File.open(file_path, "r") do |file_handle|
-		file_handle.readlines.split(/\s/).size
+		file_handle.readlines.join(" ").split(/\s/).size
 	end
 end
 
@@ -254,7 +262,7 @@ end
 def count_words_of_each_length_in_a_file(file_path)
 	hach = Hash.new(0)
 	File.open(file_path, "r") do |file_handle|
-		file_handle.readlines.split(/\W/).each{|wrd| hach[wrd] += 1}
+		file_handle.readlines.join(" ").split(/\W/).each{|wrd| hach[wrd.size] += 1 if wrd.size != 0}
 	end
   hach
 end
